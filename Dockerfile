@@ -9,9 +9,10 @@ RUN go mod tidy
 RUN go build --ldflags "-s -w -extldflags -static" -o main .
 
 FROM alpine:latest
-RUN apk update && apk add --no-cache tzdata \
-    && cp /usr/share/zoneinfo/Asia/Jakarta /etc/localtime \
-    && echo "Asia/Jakarta" > /etc/timezone
+# RUN apk update && apk add --no-cache tzdata \
+#     && cp /usr/share/zoneinfo/Asia/Jakarta /etc/localtime \
+#     && echo "Asia/Jakarta" > /etc/timezone
+ENV TZ=Asia/Jakarta
 
 WORKDIR /www
 
