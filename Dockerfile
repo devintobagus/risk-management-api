@@ -1,5 +1,7 @@
 FROM golang:alpine AS builder
 
+ENV GOPROXY=direct
+ENV GOSUMDB=off
 ENV GO111MODULE=on \
     CGO_ENABLED=0
 
