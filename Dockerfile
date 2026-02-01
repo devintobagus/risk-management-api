@@ -1,11 +1,19 @@
 FROM golang:alpine AS builder
 
-ENV GO111MODULE=on \
-    CGO_ENABLED=0
+# ENV GO111MODULE=on \
+#     CGO_ENABLED=0
+
+ENV GOPROXY=direct
+ENV GOSUMDB=off
+ENV CGO_ENABLED=0
 
 WORKDIR /build
+
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . .
-RUN go mod tidy
+# RUN go mod tidy
 RUN go build --ldflags "-s -w -extldflags -static" -o main .
 
 FROM alpine:latest
