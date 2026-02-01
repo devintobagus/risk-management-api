@@ -28,7 +28,7 @@ func (c *YahooClient) deriveRange(interval yahoo.RangeData) yahoo.RangeData {
 	switch interval {
 
 	case yahoo.ONE_DAY:
-		return yahoo.ONE_DAY
+		return yahoo.ONE_HOUR
 
 	case yahoo.FIVE_DAYS:
 		return yahoo.ONE_DAY
@@ -67,12 +67,14 @@ func (c *YahooClient) deriveRange(interval yahoo.RangeData) yahoo.RangeData {
 
 func (c *YahooClient) GetChart(
 	stock string,
-	interval yahoo.RangeData,
+	range_ yahoo.RangeData,
 ) (*yahoo.YahooChartResponse, error) {
-	range_ := c.deriveRange(interval)
-	url := fmt.Sprintf("%s/v8/finance/chart/%s.JK?interval=%s&range=%s", c.baseUrl, stock, interval, range_)
+	interval := c.deriveRange(range_)
+	url := fmt.Sprintf("%s/v8/finance/chart/%s.JK?range=%s&interval=%s", c.baseUrl, stock, range_, interval)
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
-	resp, err := c.httpClient.Get(url)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

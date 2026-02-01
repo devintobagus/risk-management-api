@@ -11,5 +11,8 @@ func init() {
 		"yahoo": map[string]any{
 			"host": config.Env("YAHOO_API_BASE_URL"),
 		},
+		"appscript": map[string]any{
+			"stock_list_url": config.Env("APPSCRIPT_STOCK_LIST_BASE_URL"),
+		},
 	})
 }

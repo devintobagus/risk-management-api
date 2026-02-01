@@ -9,6 +9,7 @@ package yahoo
 type RangeData string
 
 const (
+	ONE_HOUR    RangeData = "1h"
 	ONE_DAY     RangeData = "1d"
 	FIVE_DAYS   RangeData = "5d"
 	ONE_MONTH   RangeData = "1mo"

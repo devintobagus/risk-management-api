@@ -37,3 +37,12 @@ func (r *StockController) Chart(ctx http.Context) http.Response {
 
 	return r.Success(ctx, resp, "success")
 }
+
+func (r *StockController) List(ctx http.Context) http.Response {
+	resp, err := r.stockService.GetStockList()
+	if err != nil {
+		return r.Error(ctx, 400, err.Error())
+	}
+
+	return r.Success(ctx, resp, "success")
+}

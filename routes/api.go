@@ -14,6 +14,7 @@ func Api() {
 		router.Prefix("v1").Group(func(router route.Router) {
 			router.Prefix("stock").Group(func(router route.Router) {
 				router.Post("chart", stockController.Chart)
+				router.Get("chart", stockController.List)
 			})
 		})
 	})
