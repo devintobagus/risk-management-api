@@ -1,7 +1,8 @@
 FROM golang:alpine AS builder
 
-ENV GOPROXY=direct
-ENV GOSUMDB=off
+
+RUN apt-get update && apt-get install -y git
+
 ENV GO111MODULE=on \
     CGO_ENABLED=0
 
@@ -11,10 +12,6 @@ RUN go mod tidy
 RUN go build --ldflags "-s -w -extldflags -static" -o main .
 
 FROM alpine:latest
-# RUN apk update && apk add --no-cache tzdata \
-#     && cp /usr/share/zoneinfo/Asia/Jakarta /etc/localtime \
-#     && echo "Asia/Jakarta" > /etc/timezone
-ENV TZ=Asia/Jakarta
 
 WORKDIR /www
 
