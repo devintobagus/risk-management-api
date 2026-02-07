@@ -1,7 +1,6 @@
 FROM golang:alpine AS builder
 
-
-RUN apt-get update && apt-get install -y git
+RUN apk add --no-cache git
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0
