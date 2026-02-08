@@ -37,6 +37,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd /app
+            cd /root/app
             docker compose pull
             docker compose up -d
