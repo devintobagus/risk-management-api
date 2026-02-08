@@ -23,7 +23,7 @@ jobs:
       - uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
   deploy:
     needs: build
@@ -39,6 +39,8 @@ jobs:
           script: |
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
               -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            
+            export GITHUB_SHA=${{ github.sha }}
             cd /root/app
             docker compose pull
             docker compose up -d
