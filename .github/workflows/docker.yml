@@ -37,6 +37,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.PASSWORD }}
           script: |
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
+              -u ${{ secrets.GHCR_USERNAME }} --password-stdin
             cd /root/app
             docker compose pull
             docker compose up -d
