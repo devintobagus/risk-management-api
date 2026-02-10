@@ -7,7 +7,7 @@ type ChartDataRequest struct {
 	Range yahoo.RangeData `json:"range" validate:"required"`
 }
 
-type ChartDataResponse struct {
-	Close     []float64 `json:"close"`
-	Timestamp []int64   `json:"timestamp"`
+type ChartResponseData struct {
+	Close     float64 `json:"close"`
+	Timestamp int64   `json:"timestamp"`
 }

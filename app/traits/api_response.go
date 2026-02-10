@@ -10,7 +10,7 @@ type DefaultResponse struct {
 	Timestamp string      `json:"timestamp"`
 	Status    int         `json:"status"`
 	Message   string      `json:"message"`
-	Data      interface{} `json:"data,omitempty"`
+	Data      interface{} `json:"data"`
 	Total     *int64      `json:"total,omitempty"`
 }
 

@@ -20,7 +20,7 @@ func NewStocksServices() *StocksService {
 
 func (s *StocksService) GetChart(
 	request rm.ChartDataRequest,
-) (*rm.ChartDataResponse, error) {
+) (*[]rm.ChartResponseData, error) {
 	stock := request.Stock
 	interval := request.Range
 
@@ -33,14 +33,13 @@ func (s *StocksService) GetChart(
 		return nil, err
 	}
 
-	var data rm.ChartDataResponse
-	for _, ts := range resp.Chart.Result[0].Timestamp {
-
-		data.Timestamp = append(data.Timestamp, ts)
-	}
-
-	for _, close := range resp.Chart.Result[0].Indicators.Quote[0].Close {
-		data.Close = append(data.Close, close)
+	var data []rm.ChartResponseData
+	for i := range len(resp.Chart.Result[0].Timestamp) {
+		data_ := rm.ChartResponseData{
+			Close:     resp.Chart.Result[0].Indicators.Quote[0].Close[i],
+			Timestamp: resp.Chart.Result[0].Timestamp[i],
+		}
+		data = append(data, data_)
 	}
 
 	return &data, nil
