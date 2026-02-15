@@ -24,8 +24,10 @@ func NewAppScriptClient() *AppScriptClient {
 	}
 }
 
-func (c *AppScriptClient) GetStockList() (*appscript.StockListResponse, error) {
-	resp, err := c.httpClient.Get(c.stockListUrl)
+func (c *AppScriptClient) GetStockList(
+	stock string,
+) (*appscript.StockListResponse, error) {
+	resp, err := c.httpClient.Get(fmt.Sprintf("%s?stock=%s", c.stockListUrl, stock))
 	if err != nil {
 		return nil, err
 	}

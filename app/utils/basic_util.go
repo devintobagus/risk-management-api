@@ -1,6 +1,9 @@
 package utils
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strings"
+)
 
 func Parse[Dst any](data any) (*Dst, error) {
 	raw, err := json.Marshal(data)
@@ -17,4 +20,13 @@ func ParseFromBytes[Dst any](src []byte) (*Dst, error) {
 		return nil, err
 	}
 	return &data_, nil
+}
+
+func ExtractJSON(input string) string {
+	start := strings.Index(input, "{")
+	end := strings.LastIndex(input, "}")
+	if start == -1 || end == -1 {
+		return input
+	}
+	return input[start : end+1]
 }

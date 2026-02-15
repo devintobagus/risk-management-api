@@ -2,7 +2,6 @@ package services
 
 import (
 	"rm/app/clients"
-	"rm/app/data/appscript"
 	"rm/app/data/rm"
 )
 
@@ -45,12 +44,12 @@ func (s *StocksService) GetChart(
 	return &data, nil
 }
 
-func (s *StocksService) GetStockList() (*appscript.StockListResponse, error) {
-	resp, err := s.appsscriptClient.GetStockList()
+// func (s *StocksService) GetStockList() (*appscript.StockListResponse, error) {
+// 	resp, err := s.appsscriptClient.GetStockList()
 
-	if err != nil {
-		return nil, err
-	}
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return resp, nil
-}
+// 	return resp, nil
+// }

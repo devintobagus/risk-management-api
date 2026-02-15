@@ -8,27 +8,26 @@ import (
 	"github.com/goravel/framework/contracts/http"
 )
 
-type NewsController struct {
+type AiController struct {
 	traits.ApiResponse
 	*traits.RequestValidator
-	newsService services.NewsService
+	aiService services.AIService
 }
 
-func NewNewsController() *NewsController {
-	aiServices := services.NewAIService()
-	return &NewsController{
-		newsService:      *services.NewNewsService(aiServices),
+func NewAiController() *AiController {
+	return &AiController{
+		aiService:        *services.NewAIService(),
 		RequestValidator: traits.NewRequestValidator(),
 	}
 }
 
-func (r *NewsController) News(ctx http.Context) http.Response {
-	var req rm.NewsRequest
+func (r *AiController) NewsKeyword(ctx http.Context) http.Response {
+	var req rm.NewsKeywordRequest
 	if err := r.BindAndValidate(ctx, &req); err != nil {
 		return r.Error(ctx, 422, err.Error())
 	}
 
-	resp, err := r.newsService.StockNews(req.Query)
+	resp, err := r.aiService.NewsKeyword(req.Query)
 
 	if err != nil {
 		return r.Error(ctx, 400, err.Error())
