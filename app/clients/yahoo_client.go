@@ -28,40 +28,40 @@ func (c *YahooClient) deriveRange(interval yahoo.RangeData) yahoo.RangeData {
 	switch interval {
 
 	case yahoo.ONE_DAY:
-		return yahoo.ONE_HOUR
+		return yahoo.ONE_MINUTE
 
 	case yahoo.FIVE_DAYS:
-		return yahoo.ONE_DAY
+		return yahoo.ONE_HOUR
 
 	case yahoo.ONE_MONTH:
-		return yahoo.FIVE_DAYS
+		return yahoo.ONE_DAY
 
 	case yahoo.THREE_MONTH:
-		return yahoo.ONE_MONTH
+		return yahoo.ONE_DAY
 
 	case yahoo.SIX_MONTH:
-		return yahoo.THREE_MONTH
+		return yahoo.ONE_DAY
 
 	case yahoo.ONE_YEAR:
-		return yahoo.ONE_MONTH
+		return yahoo.ONE_DAY
 
 	case yahoo.TWO_YEAR:
-		return yahoo.THREE_MONTH
+		return yahoo.ONE_DAY
 
 	case yahoo.FIVE_YEAR:
-		return yahoo.SIX_MONTH
+		return yahoo.ONE_DAY
 
 	case yahoo.TEN_YEAR:
-		return yahoo.ONE_YEAR
+		return yahoo.ONE_DAY
 
 	case yahoo.YTD:
-		return yahoo.ONE_MONTH
+		return yahoo.ONE_DAY
 
 	case yahoo.MAX:
-		return yahoo.ONE_YEAR
+		return yahoo.ONE_DAY
 
 	default:
-		return yahoo.ONE_MONTH // safe fallback
+		return yahoo.ONE_DAY // safe fallback
 	}
 }
 
