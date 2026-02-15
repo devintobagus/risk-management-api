@@ -3,6 +3,7 @@ package services
 import (
 	"rm/app/clients"
 	"rm/app/constants"
+	"rm/app/data/mistralai"
 	"rm/app/data/rm"
 	"rm/app/utils"
 
@@ -24,16 +25,21 @@ func NewAIService() *AIService {
 func (s *AIService) NewsKeyword(
 	prompt string,
 ) (*rm.NewsKeyword, error) {
-	resp, err := s.mistralClient.ChatCompletions([]mistral.ChatMessage{
-		{
-			Role:    mistral.RoleSystem,
-			Content: constants.NEWS_KEYWORD_PROMPT,
+	resp, err := s.mistralClient.ChatCompletions(
+		mistralai.SMALL, []mistral.ChatMessage{
+			{
+				Role:    mistral.RoleSystem,
+				Content: constants.NEWS_KEYWORD_PROMPT,
+			},
+			{
+				Role:    mistral.RoleUser,
+				Content: prompt,
+			},
 		},
-		{
-			Role:    mistral.RoleUser,
-			Content: prompt,
+		&mistral.ChatRequestParams{
+			Temperature: 0.2,
 		},
-	})
+	)
 	if err != nil {
 		return nil, err
 	}

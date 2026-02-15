@@ -1,6 +1,8 @@
 package clients
 
 import (
+	"rm/app/data/mistralai"
+
 	"github.com/gage-technologies/mistral-go"
 	"github.com/goravel/framework/facades"
 )
@@ -17,9 +19,11 @@ func NewMistralClient() *MistralClient {
 }
 
 func (c *MistralClient) ChatCompletions(
+	model mistralai.MistralModel,
 	messages []mistral.ChatMessage,
+	requestParams *mistral.ChatRequestParams,
 ) (*mistral.ChatCompletionResponse, error) {
-	return c.client.Chat("mistral-large-latest", messages, nil)
+	return c.client.Chat(string(model), messages, requestParams)
 }
 
 func (c *MistralClient) Embeddings(
