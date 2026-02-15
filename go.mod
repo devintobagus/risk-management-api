@@ -14,6 +14,8 @@ require (
 	google.golang.org/grpc v1.73.0
 )
 
+require github.com/gage-technologies/mistral-go v1.1.0 // direct
+
 require (
 	atomicgo.dev/cursor v0.2.0 // indirect
 	atomicgo.dev/keyboard v0.2.9 // indirect

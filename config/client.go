@@ -14,5 +14,11 @@ func init() {
 		"appscript": map[string]any{
 			"stock_list_url": config.Env("APPSCRIPT_STOCK_LIST_BASE_URL"),
 		},
+		"mistral": map[string]any{
+			"api_key": config.Env(("MISTRAL_API_KEY")),
+		},
+		"google_news": map[string]any{
+			"host": config.Env("GOOGLE_NEWS_BASE_URL"),
+		},
 	})
 }

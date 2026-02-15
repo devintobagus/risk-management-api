@@ -3,20 +3,28 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"io"
 	"net/http"
 	"time"
 )
 
 func ParseResponse[T any](resp *http.Response) (*T, error) {
-	defer resp.Body.Close()
-
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	return ParseFromBytes[T](body)
+}
+
+func ParseXmlResponse[T any](resp *http.Response) (*T, error) {
+	var data T
+	err := xml.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
 }
 
 func Client() http.Client {
