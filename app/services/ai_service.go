@@ -36,9 +36,7 @@ func (s *AIService) NewsKeyword(
 				Content: prompt,
 			},
 		},
-		&mistral.ChatRequestParams{
-			Temperature: 0.2,
-		},
+		nil,
 	)
 	if err != nil {
 		return nil, err
