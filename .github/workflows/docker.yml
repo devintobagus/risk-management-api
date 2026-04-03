@@ -1,46 +1,63 @@
-name: Build & Deploy Goravel
-
-on:
-  push:
-    branches: [ "master" ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
-
-  deploy:
+deploy:
     needs: build
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.3
+      # 1. Keyless Authentication to Google Cloud
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
-              -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-            
-            export GITHUB_SHA=${{ github.sha }}
-            cd /root/app
-            docker compose pull
-            docker compose up -d
+          # Paste the long string you copied from Step 2 right here
+          workload_identity_provider: 'projects/${{ secrets.PROJECT_ID }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          # Paste your service account email here
+          service_account: 'github-actions-deployer@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com'
+
+      # 2. Deploy directly to Cloud Run
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'risk-management-api'
+          image: 'ghcr.io/${{ github.repository }}:${{ github.sha }}'
+          region: 'us-central1'
+          flags: '--allow-unauthenticated'
+          env_vars: |
+            APP_NAME=risk-management-api
+            APP_ENV=production
+            APP_KEY=${{ secrets.APP_KEY }}
+            APP_DEBUG=false
+            APP_URL=${{ secrets.APP_URL }}
+            APP_HOST=0.0.0.0
+            APP_PORT=3000
+            GRPC_HOST=${{ secrets.GRPC_HOST }}
+            GRPC_PORT=${{ secrets.GRPC_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            LOG_CHANNEL=stack
+            LOG_LEVEL=info
+            DB_CONNECTION=postgres
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            SESSION_DRIVER=file
+            SESSION_LIFETIME=120
+            REDIS_HOST=${{ secrets.REDIS_HOST }}
+            REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            REDIS_PORT=${{ secrets.REDIS_PORT }}
+            MAIL_HOST=${{ secrets.MAIL_HOST }}
+            MAIL_PORT=${{ secrets.MAIL_PORT }}
+            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
+            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
+            CACHE_STORE=redis
+            QUEUE_CONNECTION=redis
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}
+            YAHOO_API_BASE_URL=${{ secrets.YAHOO_API_BASE_URL }}
+            GOOGLE_NEWS_BASE_URL=${{ secrets.GOOGLE_NEWS_BASE_URL }}
+            APPSCRIPT_STOCK_LIST_BASE_URL=${{ secrets.APPSCRIPT_STOCK_LIST_BASE_URL }}
