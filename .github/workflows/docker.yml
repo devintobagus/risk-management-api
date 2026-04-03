@@ -12,7 +12,7 @@ deploy:
         uses: 'google-github-actions/auth@v2'
         with:
           # Paste the long string you copied from Step 2 right here
-          workload_identity_provider: 'projects/${{ secrets.PROJECT_ID }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
           # Paste your service account email here
           service_account: 'github-actions-deployer@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com'
 
