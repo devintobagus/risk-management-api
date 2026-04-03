@@ -1,4 +1,31 @@
-deploy:
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+  deploy:
     needs: build
     runs-on: ubuntu-latest
 
@@ -7,23 +34,19 @@ deploy:
       id-token: 'write'
 
     steps:
-      # 1. Keyless Authentication to Google Cloud
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          # Paste the long string you copied from Step 2 right here
           workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
-          # Paste your service account email here
-          service_account: 'github-actions-deployer@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com'
+          service_account: 'github-actions-deployer@your-project-id.iam.gserviceaccount.com'
 
-      # 2. Deploy directly to Cloud Run
       - id: 'deploy'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: 'risk-management-api'
           image: 'ghcr.io/${{ github.repository }}:${{ github.sha }}'
           region: 'us-central1'
-          flags: '--allow-unauthenticated'
+          flags: '--allow-unauthenticated --port=3000'
           env_vars: |
             APP_NAME=risk-management-api
             APP_ENV=production
@@ -32,8 +55,6 @@ deploy:
             APP_URL=${{ secrets.APP_URL }}
             APP_HOST=0.0.0.0
             APP_PORT=3000
-            GRPC_HOST=${{ secrets.GRPC_HOST }}
-            GRPC_PORT=${{ secrets.GRPC_PORT }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             LOG_CHANNEL=stack
             LOG_LEVEL=info
@@ -48,12 +69,6 @@ deploy:
             REDIS_HOST=${{ secrets.REDIS_HOST }}
             REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
             REDIS_PORT=${{ secrets.REDIS_PORT }}
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
             CACHE_STORE=redis
             QUEUE_CONNECTION=redis
             GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
@@ -61,3 +76,6 @@ deploy:
             YAHOO_API_BASE_URL=${{ secrets.YAHOO_API_BASE_URL }}
             GOOGLE_NEWS_BASE_URL=${{ secrets.GOOGLE_NEWS_BASE_URL }}
             APPSCRIPT_STOCK_LIST_BASE_URL=${{ secrets.APPSCRIPT_STOCK_LIST_BASE_URL }}
+
+      - name: Show deployed URL
+        run: echo "${{ steps.deploy.outputs.url }}"
