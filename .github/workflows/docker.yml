@@ -58,7 +58,7 @@ jobs:
           service: 'risk-management-api'
           image: '${{ env.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.GAR_REPO }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
           region: '${{ env.REGION }}'
-          flags: '--allow-unauthenticated --port=3000 --set-headers="Access-Control-Allow-Origin=*,Access-Control-Allow-Methods=GET POST PUT PATCH DELETE OPTIONS,Access-Control-Allow-Headers=Content-Type Authorization Accept"'
+          flags: '--allow-unauthenticated --port=3000'
           env_vars: |
             APP_NAME=risk-management-api
             APP_ENV=production
